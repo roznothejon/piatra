@@ -8,6 +8,10 @@ local.properties
 *.iml
 *.jks
 *.keystore
+# The release key's details (docs/building.md).
+keystore.properties
+# Release APKs made by tools/release.sh.
+dist/
 captures/
 .DS_Store
 # ESP-IDF (firmware/): generated build settings, downloaded components, laptop tools' venv.

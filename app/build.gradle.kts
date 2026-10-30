@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     // AGP 9 compiles Kotlin itself; the Compose compiler plugin turns @Composable functions into UI code.
     alias(libs.plugins.android.application)
@@ -27,13 +29,41 @@ android {
         compose = true
     }
 
+    // The release key, kept out of the repository (docs/building.md, "Release build"). Its
+    // details are in a properties file: the one the Gradle property `piatra.keystore` names
+    // (set it in ~/.gradle/gradle.properties), or else keystore.properties next to this
+    // project's settings.gradle.kts (git-ignored).
+    val keystoreFile = (findProperty("piatra.keystore") as String?)?.let { file(it) }
+        ?: rootProject.file("keystore.properties")
+    val releaseKey = keystoreFile.takeIf { it.exists() }?.let { f ->
+        Properties().apply { f.inputStream().use { load(it) } }
+    }
+    signingConfigs {
+        if (releaseKey != null) {
+            create("release") {
+                storeFile = file(releaseKey.getProperty("storeFile"))
+                storePassword = releaseKey.getProperty("storePassword")
+                keyAlias = releaseKey.getProperty("keyAlias")
+                keyPassword = releaseKey.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         // A debug build is "debuggable": slower to run (it can't be fully optimised), which shows
-        // as choppy animations. The release build isn't. Personal use, so it's signed with the
-        // same debug key as the debug build: the two install over each other and keep the app's data.
-        // (adb `run-as`, used to look at the database, only works on the debug build.)
+        // as choppy animations. The release build isn't. Debug and release builds are signed
+        // with different keys, so one can't be installed over the other: Android refuses an
+        // update signed by another key. (adb `run-as`, used to look at the database, only works
+        // on the debug build.)
         release {
-            signingConfig = signingConfigs.getByName("debug")
+            // Without the release key (a fresh clone), fall back to the debug key so the
+            // release build still works for testing; Gradle prints a warning.
+            signingConfig = if (releaseKey != null) {
+                signingConfigs.getByName("release")
+            } else {
+                logger.warn("piatra: no release key found, signing the release build with the debug key")
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }
