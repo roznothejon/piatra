@@ -9,7 +9,8 @@
 // The vibration motor, switched by a BC337 transistor (D3 → 470 Ω → base). High = buzz.
 #define PIN_HAPTIC 4 // D3
 
-// Battery voltage through a 220k/220k divider (half the battery voltage) on an ADC pin.
+// Battery voltage through a 470k/470k divider (half the battery voltage, 100 nF across the
+// lower resistor) on an ADC pin.
 // Reads ~0 while no battery is connected.
 #define PIN_BATTERY 1 // D0, ADC1 channel 0
 #define BATTERY_DIVIDER 2
@@ -18,7 +19,7 @@
 // card, so the LED is only used when there's no card (store_on_card).
 #define PIN_LED 21
 
-// Look for a microSD card at start-up. 0 since the board is in its case, where no
+// Look for a microSD card at start-up. 0 for a board in a case, where no
 // card fits: looking costs ~40 ms of every wake-up, and the board doesn't
 // report SD_ERROR. Set to 1 for a board that has a card.
 #define USE_SD_CARD 0
