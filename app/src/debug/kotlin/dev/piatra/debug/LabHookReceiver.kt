@@ -23,7 +23,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.File
 
-// The agent lab over adb, for Claude to test agent changes without touching the screen
+// The agent lab over adb, for testing agent changes from a laptop without touching the screen
 // (debug builds only: lives in src/debug). The same dry run as the lab: nothing is saved.
 //   adb shell am broadcast -p dev.piatra -a dev.piatra.debug.TRY --es phrase "add puka to my cat list"
 //     (add --ez model_text false/true to override the "Use the model's wording" setting)

@@ -9,7 +9,7 @@ import kotlin.time.Duration.Companion.seconds
 // The agent test set: phrases with the result we'd want, run by the agent lab.
 // Every phrase is treated as said at the same moment, ANCHOR, so expected times can be written
 // down and runs are repeatable. Expectations are what a person would mean, not what Piatra does
-// today: a failing case is a known weakness, not a typo. Results: docs/agent.md.
+// today: a failing case is a known weakness, not a typo. Results: docs/agent-eval.md.
 
 // Thursday 22 October 2026, 14:00, in the phone's time zone.
 val ANCHOR = LocalDateTime(2026, 10, 22, 14, 0)
