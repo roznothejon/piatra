@@ -59,6 +59,8 @@ recent mid-range phone.
 
 | Guide | What's in it |
 |---|---|
+| [`docs/user-guide.md`](docs/user-guide.md) | Setting up and using the app and the board: pairing, what to say, reminders, backup |
+| [`docs/troubleshooting.md`](docs/troubleshooting.md) | What to do when something doesn't work |
 | [`docs/building.md`](docs/building.md) | Building and installing the app, tests, signed releases, building the firmware |
 | [`firmware/README.md`](firmware/README.md) | Using the board, flashing, updates over Bluetooth, the laptop tools, pins |
 | [`docs/architecture.md`](docs/architecture.md) | How the pieces fit together, and where to change what |
