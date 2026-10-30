@@ -1,6 +1,6 @@
 # Piatra
 
-A pocket voice-note button and the Android app that goes with it. Press the button, speak,
+A pocket voice-note button and the Android app that goes with it. Hold the button, speak,
 and let go. The note is stored on the button and synced to your phone over Bluetooth when
 the phone is near. The phone transcribes it and an on-device agent turns it into a reminder,
 a list item, a note, an alarm or a timer.
@@ -8,11 +8,18 @@ a list item, a note, an alarm or a timer.
 Everything runs on the phone. There's no cloud service, no account and no sign-in. The app
 needs the network once, to download its two models from Hugging Face, and never again.
 
+The idea comes straight from the [Pebble Index 01](https://repebble.com/), Core Devices'
+voice-note ring: press, speak, and the phone turns it into a reminder or a note. Piatra is a
+do-it-yourself take on the same idea, built around an ESP32 board, with its own Bluetooth
+protocol and firmware. Its app reuses parts of Core Devices' open-source mobile app (see
+[License](#license)). It isn't affiliated with Core Devices or Pebble.
+
 ## What it does
 
-- **Record anywhere.** The board records from its microphone while you hold the button (or
-  until you press again), compresses the note with Opus and keeps it in its flash: about 40
-  minutes in total, up to 5 minutes per note. It buzzes when it starts listening.
+- **Record anywhere.** The board records from its microphone while you hold the button,
+  compresses the note with Opus and keeps it in its flash: about 40 minutes in total, up to
+  5 minutes per note. It buzzes when it starts listening. A press shorter than a second is a
+  tap, not a recording: one tap makes the phone check in, five taps pair a new phone.
 - **Sync by itself.** When the board has notes it advertises over Bluetooth LE. The app
   notices in the background, connects (encrypted, bonded to one phone), downloads each note
   and tells the board to delete it. Long-range Bluetooth (Coded PHY) is used where the phone

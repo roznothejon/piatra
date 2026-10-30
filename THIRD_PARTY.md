@@ -20,8 +20,9 @@ is GPL-3.0 because it includes this code. Where a comment in Piatra's code says 
 means this app.
 
 Pebble is a trademark of its owners. Piatra isn't affiliated with or endorsed by Core Devices
-or the Pebble brand, and it doesn't use the name. "Pebble" appears only in the name of a
-third-party model (`needle-pebble-ft`) and in comments that point to upstream source files.
+or the Pebble brand, and it doesn't use the name. "Pebble" appears only in the README (which credits the Pebble Index 01 as
+the inspiration), in the name of a third-party model (`needle-pebble-ft`) and in comments that
+point to upstream source files.
 
 ## Bundled binaries
 
