@@ -1,0 +1,7 @@
+# Extra components from Espressif's component registry (like Gradle dependencies).
+# The exact versions are pinned in dependencies.lock, which is committed.
+dependencies:
+  idf: ">=6.0"
+  joltwallet/littlefs: ">=1.20.0"
+  # libopus (the reference Opus encoder, BSD licence) for recording compression.
+  78/esp-opus: "^1.0.5"

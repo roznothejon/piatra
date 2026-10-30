@@ -1,0 +1,32 @@
+dependencies:
+  78/esp-opus:
+    component_hash: 8182b733f071d7bfe1e837f4c9f8649a63e4c937177f089e65772880c02f2e17
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.0.5
+  idf:
+    source:
+      type: idf
+    version: 6.0.3
+  joltwallet/littlefs:
+    component_hash: e1a0f4a6adf821759cb34703a91107bbdce5d7ff6f4728f40ab012bb87842974
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.23.1
+direct_dependencies:
+- 78/esp-opus
+- idf
+- joltwallet/littlefs
+manifest_hash: c99d05a3678970f3a2b2d3c267dc188a59b649f00487becd879362cea35a9c54
+target: esp32s3
+version: 3.0.0

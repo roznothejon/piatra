@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Runtime permission: declared here, and the user must also allow it in a dialog. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Normal permission: granted at install, no dialog. Only used to download the models.
+         (Some Android builds add their own per-app "Network" toggle on top; see ModelManager.) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Reminders. POST_NOTIFICATIONS is a runtime permission (a dialog, Android 13+).
+         USE_EXACT_ALARM: exact alarms, granted at install and not revocable (
+         the Play Store only allows it for alarm-style apps, but Piatra isn't on the Play Store).
+         Android 12 has no USE_EXACT_ALARM, so it gets SCHEDULE_EXACT_ALARM there (maxSdkVersion). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
+    <!-- Lets Piatra ask the Clock app to set alarms and timers. Install-time, no dialog. -->
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+
+    <!-- Package visibility (Android 11+): apps can't see which other apps are installed unless
+         they declare what they look for. Without this, Piatra can't find the Clock app.
+         (From upstream's manifest, missed in the first port.) -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SET_ALARM" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SET_TIMER" />
+        </intent>
+        <!-- To check whether Tasker is installed. -->
+        <package android:name="net.dinglisch.android.taskerm" />
+    </queries>
+    <!-- To set reminder alarms again after the phone restarts. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- The board. BLUETOOTH_CONNECT (Android 12+) is a runtime permission: a dialog,
+         asked when you pair. Before Android 12 the two old install-time ones did the same job.
+         No scanning permission: the system's pairing dialog (CompanionDeviceManager) does the
+         scan, and after that the app connects by address. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <!-- Automatic sync: our own background scan for the board's adverts. Same
+         "Nearby devices" dialog as BLUETOOTH_CONNECT. neverForLocation: we promise not to work
+         out where the phone is from what we hear, so no location permission is needed. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <!-- Board sync runs in a foreground service of type connectedDevice. Both are
+         install-time; the type also needs BLUETOOTH_CONNECT to be granted. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <!-- Automatic sync. Normal permissions, granted at install, for apps with a
+         CompanionDeviceManager association: ask the system to watch for the board, and start
+         the sync service from the background when it appears. -->
+    <uses-permission android:name="android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE" />
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND" />
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
+    <uses-feature android:name="android.software.companion_device_setup" android:required="false" />
+
+    <!-- name: our Application subclass, created before any Activity or Service. -->
+    <application
+        android:name=".PiatraApp"
+        android:label="Piatra"
+        android:theme="@android:style/Theme.Material.NoActionBar">
+
+        <!-- The launcher opens this Activity: MAIN + LAUNCHER puts it in the app drawer. -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Shows a reminder when its alarm goes off, and handles its Done button.
+             exported="false": only our own PendingIntents can start it. -->
+        <receiver
+            android:name=".android.ReminderReceiver"
+            android:exported="false" />
+
+        <!-- Sets reminder alarms again after a restart or an app update. exported="true" so the
+             system can deliver these broadcasts. -->
+        <receiver
+            android:name=".android.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Syncs recordings from the board. exported="false": only Piatra starts it. -->
+        <service
+            android:name=".android.BoardSyncService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+
+        <!-- Gets the board's adverts from our background scan. exported="false":
+             only our own PendingIntent reaches it. -->
+        <receiver
+            android:name=".android.BoardScanReceiver"
+            android:exported="false" />
+
+        <!-- Told by the system when the paired board appears or goes away. The
+             permission means only the system can bind it; exported so the system can reach it. -->
+        <service
+            android:name=".android.BoardCompanionService"
+            android:exported="true"
+            android:permission="android.permission.BIND_COMPANION_DEVICE_SERVICE">
+            <intent-filter>
+                <action android:name="android.companion.CompanionDeviceService" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

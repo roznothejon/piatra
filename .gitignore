@@ -1,0 +1,20 @@
+.gradle/
+.kotlin/
+build/
+# CMake's working files for native (C) code.
+.cxx/
+local.properties
+.idea/
+*.iml
+*.jks
+*.keystore
+captures/
+.DS_Store
+# ESP-IDF (firmware/): generated build settings, downloaded components, laptop tools' venv.
+firmware/sdkconfig
+firmware/sdkconfig.old
+firmware/managed_components/
+firmware/tools/.venv/
+firmware/tools/recordings/
+firmware/tools/__pycache__/
+firmware/dev.secret

@@ -1,0 +1,14 @@
+# How the 8 MB of flash is divided. Program slots must start on a 64 KB boundary.
+# Two program slots, so a new firmware can arrive over Bluetooth into the slot that isn't
+# running (tools/dev.py flash); otadata says which one to start. nvs stays where it was, so
+# bonds and the recording counter survived the switch to this layout.
+# The free 56 KB between phy_init and ota_0 (0x12000) is where a new bootloader is received
+# and checked before it's copied to 0x0 (tools/dev.py bootloader): keep it free.
+# Name,    Type, SubType,  Offset,    Size
+nvs,       data, nvs,      0x9000,    0x6000
+otadata,   data, ota,      0xf000,    0x2000
+phy_init,  data, phy,      0x11000,   0x1000
+ota_0,     app,  ota_0,    0x20000,   0x180000
+ota_1,     app,  ota_1,    0x1A0000,  0x180000
+# Recordings (LittleFS) when there's no SD card: the rest, about 4.9 MB, so about 2.5 minutes.
+storage,   data, littlefs, 0x320000,  0x4E0000

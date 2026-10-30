@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Debug builds only: merged into the main manifest by Gradle for assembleDebug/installDebug. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- The agent lab over adb (see LabHookReceiver). android.permission.DUMP: only the adb
+             shell (and the system) holds it, so other apps can't trigger runs. -->
+        <receiver
+            android:name="dev.piatra.debug.LabHookReceiver"
+            android:exported="true"
+            android:permission="android.permission.DUMP">
+            <intent-filter>
+                <action android:name="dev.piatra.debug.TRY" />
+                <action android:name="dev.piatra.debug.TEST_SET" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

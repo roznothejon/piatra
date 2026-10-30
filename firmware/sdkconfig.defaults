@@ -1,0 +1,74 @@
+# Build settings we change from ESP-IDF's defaults (like gradle.properties). `idf.py build`
+# turns these into the full `sdkconfig`, which isn't committed. After editing this file,
+# delete `sdkconfig` so it gets rebuilt from here.
+
+CONFIG_IDF_TARGET="esp32s3"
+
+# XIAO ESP32S3: 8 MB flash. Our own flash layout is in partitions.csv.
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# Firmware updates over Bluetooth (tools/dev.py flash): a new firmware starts "on trial", and
+# the bootloader goes back to the previous one if it restarts before being confirmed.
+CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y
+
+# Faster wake-ups. Waking from deep sleep is a restart through the bootloader,
+# which normally re-checks the whole firmware (~80 ms); this skips that check, but only on a
+# wake from deep sleep and only for the firmware that last started fine. Every other start
+# still checks it. Quieter bootloader logs save a bit more. These only take effect once the
+# board has the new bootloader (tools/dev.py bootloader); the firmware must be built with
+# them first (they reserve a little RTC memory the bootloader writes to).
+CONFIG_BOOTLOADER_SKIP_VALIDATE_IN_DEEP_SLEEP=y
+CONFIG_BOOTLOADER_LOG_LEVEL_WARN=y
+
+# Log and commands over the USB-C port (the chip's built-in USB serial), not the UART pins.
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+
+# Bluetooth LE with the NimBLE stack (smaller than Bluedroid, BLE only).
+CONFIG_BT_ENABLED=y
+CONFIG_BT_NIMBLE_ENABLED=y
+CONFIG_BT_NIMBLE_MAX_CONNECTIONS=1
+# The largest MTU the phone can ask for (protocol section 2): up to 514 bytes per notification.
+CONFIG_BT_NIMBLE_ATT_PREFERRED_MTU=517
+# Bonds (protocol section 7) are kept in NVS, so a paired phone stays paired after a restart.
+CONFIG_BT_NIMBLE_NVS_PERSIST=y
+# LE Secure Connections only: the older "legacy" pairing can be cracked by anyone listening.
+CONFIG_BT_NIMBLE_SM_LEGACY=n
+# NimBLE logs every packet at INFO; ours are enough.
+CONFIG_BT_NIMBLE_LOG_LEVEL_WARNING=y
+# Transmit at the chip's maximum, +20 dBm (ESP-IDF's default is +9): the metal case swallows
+# most of the signal. Costs power only while the radio is sending.
+CONFIG_BT_CTRL_DFT_TX_POWER_LEVEL_P20=y
+# Extended advertising (Bluetooth 5), for a second advert on the long-range Coded PHY next to
+# the ordinary one (protocol section 8). Our adverts are under 50 bytes.
+CONFIG_BT_NIMBLE_EXT_ADV=y
+CONFIG_BT_NIMBLE_MAX_EXT_ADV_INSTANCES=2
+CONFIG_BT_NIMBLE_EXT_ADV_MAX_SIZE=251
+# What extended advertising switches on by default that the board doesn't use (saves RAM).
+CONFIG_BT_NIMBLE_ENABLE_PERIODIC_ADV=n
+CONFIG_BT_NIMBLE_EXT_SCAN=n
+CONFIG_BT_NIMBLE_ENABLE_PERIODIC_SYNC=n
+
+# Keep the mic's interrupt handler in RAM, so it keeps running while the flash is being
+# written (code in flash can't run then). Otherwise the I2S driver only hands over the last
+# 20 ms buffer filled during a flash write and silently drops the others: the skip ~1 s into
+# a recording, where the writer creates its files, and small clicks at later writes.
+CONFIG_I2S_ISR_IRAM_SAFE=y
+
+# Light sleep while awake. Between adverts and connection events the chip naps
+# (RAM kept, wakes in about a millisecond) instead of idling at full speed: power management,
+# plus FreeRTOS's "tickless idle" (no 1 ms tick to wake for; it sleeps until the next task or
+# timer is due). sleep.c switches it on with esp_pm_configure().
+CONFIG_PM_ENABLE=y
+CONFIG_FREERTOS_USE_TICKLESS_IDLE=y
+# The radio sleeps between its own events too ("modem sleep"). While the chip naps, it needs a
+# clock accurate enough for Bluetooth's timing (±500 ppm). The board has no 32 kHz crystal and
+# the internal RC oscillator drifts too much for connections, so the 40 MHz main crystal stays
+# on during light sleep (~1 mA, still far below idling awake).
+CONFIG_BT_CTRL_MODEM_SLEEP=y
+CONFIG_BT_CTRL_MODEM_SLEEP_MODE_1=y
+CONFIG_BT_CTRL_LPCLK_SEL_MAIN_XTAL=y
+CONFIG_BT_CTRL_MAIN_XTAL_PU_DURING_LIGHT_SLEEP=y
+# Time spent in each power mode, for the console's `pm` command (dev.py pm).
+CONFIG_PM_PROFILING=y
