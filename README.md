@@ -55,10 +55,18 @@ An Android phone with a 64-bit ARM CPU (arm64-v8a), Android 13 or newer for pair
 board, and about 500 MB free for the models. The speech model runs comfortably on a
 recent mid-range phone.
 
-## Getting started
+## Documentation
 
-[`docs/building.md`](docs/building.md) explains how to build and install the app, make a
-signed release, and build and flash the firmware.
+| Guide | What's in it |
+|---|---|
+| [`docs/building.md`](docs/building.md) | Building and installing the app, tests, signed releases, building the firmware |
+| [`firmware/README.md`](firmware/README.md) | Using the board, flashing, updates over Bluetooth, the laptop tools, pins |
+| [`docs/architecture.md`](docs/architecture.md) | How the pieces fit together, and where to change what |
+| [`docs/agent-rules.md`](docs/agent-rules.md) | Every rule between "you spoke" and "something happened" |
+| [`docs/agent-eval.md`](docs/agent-eval.md) | The Agent lab's test set and what it showed about the model |
+| [`docs/esp32-protocol.md`](docs/esp32-protocol.md) | The Bluetooth protocol between board and phone |
+| [`docs/tasker.md`](docs/tasker.md) | Sending notes and reminders on to Tasker |
+| [`CLAUDE.md`](CLAUDE.md) | Rules for contributors (people and coding agents) |
 
 ## Repository layout
 
