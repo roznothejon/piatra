@@ -129,7 +129,7 @@ private fun currentStates(r: HealthReport, ignoreSdError: Boolean): Map<BoardWar
         )
     }
     if (r.has(DeviceFlag.SD_ERROR) && !ignoreSdError) {
-        put(BoardWarning.SD_ERROR, WarningNotice(BoardWarning.SD_ERROR, "Board SD card error", "The SD card is missing or can't be read. Recording to the board's own memory (about 3 minutes)."))
+        put(BoardWarning.SD_ERROR, WarningNotice(BoardWarning.SD_ERROR, "Board SD card error", "The SD card is missing or can't be read. Recording to the board's own memory instead."))
     }
     if (r.has(DeviceFlag.MIC_ERROR)) {
         put(BoardWarning.MIC_ERROR, WarningNotice(BoardWarning.MIC_ERROR, "Board microphone error", "The microphone didn't start."))
